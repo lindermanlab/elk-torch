@@ -23,7 +23,7 @@ just to double check:
 which conda  # Expect: /scratch/users/<sunetid>/miniconda3/bin/conda
 ```
 Next, we need to ensure that environment paths are prepended to $PATH; this is not automatically done on Linux systems (see issue). To do this, edit your ~/.bashrc file. At the bottom of the file, you will see a code block starting with # >>> conda initialize >>> (this was added when you ran conda init above). Either
-Add `conda `deactivate` after this block.
+Add `conda deactivate` after this block.
 Now, restart your shell by running source ~/.bashrc.
 Then, I activated this miniconda environment. I then ran `conda install pytorch torchvision torchaudio pytorch-cuda=12.4 -c pytorch -c nvidia`
 At this point, the python had been upgraded to 3.12.7
