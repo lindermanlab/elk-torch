@@ -15,7 +15,7 @@ Actively under development. Currently only provides the quasi algorithms. PRs fo
 4. `conda activate elk_torch`
 5. `conda install pytorch torchvision torchaudio pytorch-cuda=12.4 -c pytorch -c nvidia` # note that you need the nvidia channel for pytorch-cuda
 6. `pip install -r requirements.txt`
-7. `pip install -e elk-torch/`
+7. `pip install -e .`
 
 ### Legacy instructions (for reference)
 
