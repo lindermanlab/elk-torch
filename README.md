@@ -11,8 +11,11 @@ Actively under development. Currently only provides the quasi algorithms. PRs fo
 
 1. Make sure you have miniconda installed on Sherlock
 2. `git clone` this repo
-3. `chmod+x setup_env.sh`
-4. `./setup_env.sh`
+3. `conda create -n elk_torch`
+4. `conda activate elk_torch`
+5. `conda install pytorch torchvision torchaudio pytorch-cuda=12.4 -c pytorch -c nvidia` # note that you need the nvidia channel for pytorch-cuda
+6. `pip install -r requirements.txt`
+7. `pip install -e elk-torch/`
 
 ### Legacy instructions (for reference)
 
