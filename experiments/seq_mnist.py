@@ -1,8 +1,8 @@
 import wandb
 import torch
 import torch.nn as nn
-from elk-torch.data.dataloaders.basic import load_sequential_mnist
-from elk-torch.models.minrnn import MinRNNClassifier
+from elk_torch.data.dataloaders.basic import load_sequential_mnist
+from elk_torch.models.minrnn import MinRNNClassifier
 from tqdm import tqdm
 
 if __name__ == "__main__":
