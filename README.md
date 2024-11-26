@@ -10,9 +10,9 @@ Actively under development. Currently only provides the quasi algorithms. PRs fo
 ### Sherlock
 
 1. Make sure you have miniconda installed on Sherlock
-2. Git clone this repo
+2. `git clone` this repo
 3. `chmod+x setup_env.sh`
-4. ./setup_env.sh
+4. `./setup_env.sh`
 
 ### Legacy instructions (for reference)
 
