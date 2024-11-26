@@ -1,7 +1,7 @@
 # elk-torch
 Parallelizing nonlinear dynamics--in PyTorch
 
-This repo uses techniques to parallelize nonliner RNNs, such as DEER from Lim et al 2024 ([paper](https://arxiv.org/abs/2309.12252), [code](https://github.com/machine-discovery/deer)) and ELK from Gonzalez et al 2024 ([paper](https://arxiv.org/abs/2407.19115), [code](https://github.com/lindermanlab/elk)). However, unlike these implementations, this repo is in pytorch! Actively under development.
+This repo uses techniques to parallelize nonliner RNNs, such as DEER from Lim et al 2024 ([paper](https://arxiv.org/abs/2309.12252), [code](https://github.com/machine-discovery/deer)) and ELK from Gonzalez et al 2024 ([paper](https://arxiv.org/abs/2407.19115), [code](https://github.com/lindermanlab/elk)). However, unlike these implementations, this repo is in pytorch! Actively under development. Currently only provides the quasi algorithms. PRs for the full algorithms (with efficient associative parallel scans) welcome!
 
 ## Install instructions
 
