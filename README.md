@@ -7,7 +7,14 @@ Actively under development. Currently only provides the quasi algorithms. PRs fo
 
 ## Install instructions
 
-### For Stanford Sherlock
+### Sherlock
+
+1. Make sure you have miniconda installed on Sherlock
+2. Git clone this repo
+3. `chmod+x setup_env.sh`
+4. ./setup_env.sh
+
+### Legacy instructions (for reference)
 
 Here is the original procedure I followed to be able to run on Sherlock.
 
