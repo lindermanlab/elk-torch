@@ -10,7 +10,7 @@
 module load cuda/12.4
 
 
-source /scratch/users/xavier18/miniconda3/bin/activate torch-tst
+source /scratch/users/xavier18/miniconda3/bin/activate elk_torch
 
 # Debugging
 env | grep PATH
@@ -18,4 +18,4 @@ which ninja
 python -m pip show ninja
 
 
-/scratch/users/xavier18/miniconda3/envs/torch-tst/bin/python3 seq_mnist_torch.py $@
+/scratch/users/xavier18/miniconda3/envs/elk_torch/bin/python3 seq_mnist_torch.py $@
