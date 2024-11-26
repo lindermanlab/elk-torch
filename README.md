@@ -7,7 +7,8 @@ This repo uses techniques to parallelize nonliner RNNs, such as DEER from Lim et
 
 ### For Stanford Sherlock
 
-Here is the procedure I followed to be able to run `seq_mnist_torch.py` on Sherlock.
+Here is the original procedure I followed to be able to run on Sherlock.
+
 Note that I automatically load python 3.12.1 in my Sherlock.
 I then set up a miniconda version of python, following the instructions in the lab manual. Note that I requested a compute node in order to actually install miniconda.
 ```
