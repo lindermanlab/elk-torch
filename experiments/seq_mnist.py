@@ -26,6 +26,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--entity", type=str, default="xavier_gonzalez", help="wandb entity"
     )
+    parser.add_argument("--proto", action="store_true", help="prototype")
     args = parser.parse_args()
 
     # set up wandb
@@ -38,6 +39,9 @@ if __name__ == "__main__":
     batch_size = 256  # 256
     learning_rate = 0.001
     num_iters = args.num_iters  # 10
+    if args.proto:
+        hidden_size = 16
+        num_epochs = 2
     print(f"Using {num_iters} quasi-DEER iterations")
 
     # Load datasets
