@@ -1,7 +1,7 @@
 # elk-torch
 Parallelizing nonlinear dynamics--in PyTorch
 
-This repo uses techniques to parallelize nonliner RNNs, such as DEER from Lim et al 2024 ([paper](https://arxiv.org/abs/2309.12252), [code](https://github.com/machine-discovery/deer)) and ELK from Gonzalez et al 2024 ([paper](https://arxiv.org/abs/2407.19115), [code](https://github.com/lindermanlab/elk)). These parallel algs are fondl known as the "ungulates." However, unlike these implementations, this repo is in pytorch!
+This repo uses techniques to parallelize nonliner RNNs, such as DEER from Lim et al 2024 ([paper](https://arxiv.org/abs/2309.12252), [code](https://github.com/machine-discovery/deer)) and ELK from Gonzalez et al 2024 ([paper](https://arxiv.org/abs/2407.19115), [code](https://github.com/lindermanlab/elk)). These parallel algs are fondly known as the "ungulates." However, unlike these implementations, this repo is in pytorch!
 
 Actively under development. Currently only provides the quasi algorithms. PRs for the full algorithms (with efficient associative parallel scans) welcome!
 
@@ -16,6 +16,7 @@ Actively under development. Currently only provides the quasi algorithms. PRs fo
 5. `conda install pytorch torchvision torchaudio pytorch-cuda=12.4 -c pytorch -c nvidia` # note that you need the nvidia channel for pytorch-cuda
 6. `pip install -r requirements.txt`
 7. `pip install -e .`
+8. `ml cuda/12.4`
 
 ### Legacy instructions (for reference)
 
