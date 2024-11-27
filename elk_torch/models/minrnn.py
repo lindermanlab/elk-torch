@@ -1,6 +1,6 @@
 """
 TODO:
-    * identity initialization?
+    * identity initialization? (Alex Wang suggestion)
 """
 import torch
 import torch.nn as nn
@@ -10,57 +10,40 @@ from elk_torch.algs.algs import quasi_deer_torch
 
 # the MinRNN modules
 class MinRNNCell(nn.Module):
-    """
-    From: https://arxiv.org/pdf/1711.06788
-    """
-
-    def __init__(self, hidden_dim, input_dim):
+    def __init__(self, input_size, hidden_size):
         super(MinRNNCell, self).__init__()
+        self.hidden_size = hidden_size
+        self.input_size = input_size
 
-        self.hidden_dim = hidden_dim
-        self.input_dim = input_dim
-
-        # Initialize weights and biases
         self.input_weights = nn.Parameter(
-            torch.randn(hidden_dim, input_dim) / (input_dim**0.5)
+            torch.randn(hidden_size, input_size) / (input_size**0.5)
         )
-        self.input_bias = nn.Parameter(torch.zeros(hidden_dim))
+        self.input_bias = nn.Parameter(torch.zeros(hidden_size))
         self.recurrent_weights = nn.Parameter(
-            torch.randn(hidden_dim, hidden_dim) / (hidden_dim**0.5)
+            torch.randn(hidden_size, hidden_size) / (hidden_size**0.5)
         )
-        self.U_z = nn.Parameter(torch.randn(hidden_dim, hidden_dim) / (hidden_dim**0.5))
-        self.b_u = nn.Parameter(torch.zeros(hidden_dim))
+        self.U_z = nn.Parameter(
+            torch.randn(hidden_size, hidden_size) / (hidden_size**0.5)
+        )
+        self.b_u = nn.Parameter(torch.zeros(hidden_size))
 
-    def forward(self, prev_state, input):
-        """
-        prev_state: (batch_size, hidden_dim)
-        input: (batch_size, input_dim)
-        """
-        # Compute z
+    def forward(self, input, prev_state):
         z = torch.tanh(torch.matmul(input, self.input_weights.T) + self.input_bias)
-        # Compute u (update gate)
         u = torch.sigmoid(
             torch.matmul(prev_state, self.recurrent_weights.T)
             + torch.matmul(z, self.U_z.T)
             + self.b_u
         )
-        # Update state
         state = u * prev_state + (1 - u) * z
         return state
 
-    def diagonal_derivative(self, prev_state, input):
-        """
-        Diagonal derivative of state wrt prev_state
-        Should be of length hidden_dim
-        Following formula (4) in https://arxiv.org/pdf/1711.06788
-        """
+    def diagonal_derivative(self, input, prev_state):
         z = torch.tanh(torch.matmul(input, self.input_weights.T) + self.input_bias)
         u = torch.sigmoid(
             torch.matmul(prev_state, self.recurrent_weights.T)
             + torch.matmul(z, self.U_z.T)
             + self.b_u
         )
-        # Compute the diagonal derivative
         derivative = (
             u + (prev_state - z) * u * (1 - u) * self.recurrent_weights.diagonal()
         )
