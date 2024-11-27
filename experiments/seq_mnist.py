@@ -57,9 +57,9 @@ if __name__ == "__main__":
 
     for epoch in tqdm(range(num_epochs)):
         for x, y in tqdm(train_loader):
-            x = x.to(device)
+            x = x.to(device) # (B, D, T)
             y = y.to(device)
-            x = x.permute(2, 0, 1)  # (T,B,D)
+            x = x.permute(0, 2, 1)  # (B, T, D)
             optimizer.zero_grad()
             logits = model(x, parallel=True)
             loss = criterion(logits, y)
@@ -74,7 +74,7 @@ if __name__ == "__main__":
             for x, y in tqdm(test_loader):
                 x = x.to(device)
                 y = y.to(device)
-                x = x.permute(2, 0, 1)  # (T,B,D)
+                x = x.permute(0, 2, 1)  # (B,D,T)
                 predictions = model.predict(x, parallel=True)
                 correct += torch.sum(predictions == y)
                 total += len(y)

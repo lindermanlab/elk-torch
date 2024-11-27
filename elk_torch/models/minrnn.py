@@ -57,32 +57,34 @@ class MinRNN(nn.Module):
 
     def forward(self, inputs):
         """
-        inputs: (seq_len, batch_size, input_dim)
-        outputs: (seq_len, batch_size)
+        We are going to follow the "batch_first" convention,
+
+        inputs: (batch_size, seq_len, input_dim)
+        outputs: (batch_size, seq_len, hidden_dim)
         """
-        seq_len, batch_size, _ = inputs.size()
+        batch_size, seq_len, _ = inputs.size()
         state = torch.zeros(batch_size, self.cell.hidden_dim).to(inputs.device)  # (B,D)
         outputs = []
 
         for t in range(seq_len):
             input_t = inputs[t]
-            state = self.cell(state, input_t)
+            state = self.cell(state, input_t) # (B,D)
             outputs.append(state)
 
-        outputs = torch.stack(outputs, dim=0)
+        outputs = torch.stack(outputs, dim=1) # (B,T,D)
         return outputs
 
     def parallel_forward(self, inputs, num_iters=10):
         """
-        inputs: (seq_len, batch_size, input_dim)
-        outputs: (seq_len, batch_size)
+        inputs: (batch_size, seq_len, input_dim)
+        outputs: (batch_size, seq_len, hidden_dim)
 
         Note: the parallel scan from https://github.com/proger/accelerated-scan
         Takes inputs in shape (B, D, T)
         So some reshaping is needed at the start
         """
-        seq_len, batch_size, _ = inputs.size()
-        inputs = inputs.permute(1, 2, 0)  # (B, d_input, T)
+        batch_size, seq_len, _ = inputs.size()
+        inputs = inputs.permute(0, 2, 1)  # (B, d_input, T)
         hidden_init = torch.zeros(batch_size, self.cell.hidden_dim).to(
             inputs.device
         )  # (B,D)
@@ -92,17 +94,19 @@ class MinRNN(nn.Module):
         outputs = quasi_deer_torch(
             f=self.cell,
             diagonal_derivative=self.cell.diagonal_derivative,
-            initial_state=hidden_init,
-            states_guess=states_guess,
-            drivers=inputs,
+            initial_state=hidden_init, # (B,D)
+            states_guess=states_guess, # (B,D,T)
+            inputs=inputs, # (B,d_input,T)
             num_iters=num_iters,
-        )
-        return outputs  # (T,B,D)
+        ) # (B,D,T)
+        return outputs.permute(0, 2, 1) # (B,T,D)
 
 
 class MinRNNClassifier(nn.Module):
     """
     Classifier built on MinRNN for time series classification
+
+    Note: follows batch first convention
     """
 
     def __init__(self, hidden_dim, input_dim, num_classes=10):
@@ -112,16 +116,16 @@ class MinRNNClassifier(nn.Module):
 
     def forward(self, x, parallel=False):
         """
-        x: (seq_len, batch_size, input_dim)
+        x: (batch_size, seq_len, input_dim)
         returns: (batch_size, num_classes)
         """
         if parallel:
-            rnn_output = self.rnn.parallel_forward(x)
+            rnn_output = self.rnn.parallel_forward(x) # (batch_size, seq_len, hidden_dim)
         else:
-            rnn_output = self.rnn(x)
+            rnn_output = self.rnn(x) # (batch_size, seq_len, hidden_dim)
 
         # Use the last output for classification
-        last_hidden = rnn_output[-1, :, :]  # (batch_size, hidden_dim)
+        last_hidden = rnn_output[:, -1, :]  # (batch_size, hidden_dim)
 
         # Pass through the classifier
         logits = self.classifier(last_hidden)  # (batch_size, num_classes)
@@ -131,6 +135,7 @@ class MinRNNClassifier(nn.Module):
     def predict(self, x, parallel=False):
         """
         Convenience method for getting class predictions
+        Be careful about the parallel flag!
         """
         logits = self(x, parallel)
         return torch.argmax(logits, dim=1)
