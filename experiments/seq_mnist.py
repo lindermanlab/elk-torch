@@ -50,7 +50,7 @@ if __name__ == "__main__":
 
     # train model
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = MinRNNClassifier(hidden_size=hidden_size, input_size=1, num_classes=10)
+    model = MinRNNClassifier(input_size=1, hidden_size=hidden_size, num_classes=10)
     model.to(device)
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters())

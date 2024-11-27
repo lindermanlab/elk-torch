@@ -28,7 +28,7 @@ class MinRNNCell(nn.Module):
         self.b_u = nn.Parameter(torch.zeros(hidden_size))
 
     def forward(self, input, prev_state):
-        z = torch.tanh(torch.matmul(input, self.input_weights.T) + self.input_bias)
+        z = torch.tanh(torch.matmul(input, self.input_weights) + self.input_bias) # (B,D)
         u = torch.sigmoid(
             torch.matmul(prev_state, self.recurrent_weights.T)
             + torch.matmul(z, self.U_z.T)
@@ -51,9 +51,9 @@ class MinRNNCell(nn.Module):
 
 
 class MinRNN(nn.Module):
-    def __init__(self, hidden_size, input_size):
+    def __init__(self, input_size, hidden_size):
         super(MinRNN, self).__init__()
-        self.cell = MinRNNCell(hidden_size, input_size)
+        self.cell = MinRNNCell(input_size, hidden_size)
 
     def forward(self, inputs):
         """
@@ -107,11 +107,12 @@ class MinRNNClassifier(nn.Module):
     Classifier built on MinRNN for time series classification
 
     Note: follows batch first convention
+    Note: follows input_size, hidden_size pytorch convention (https://pytorch.org/docs/stable/generated/torch.nn.GRU.html)
     """
 
-    def __init__(self, hidden_size, input_size, num_classes=10):
+    def __init__(self, input_size, hidden_size, num_classes=10):
         super(MinRNNClassifier, self).__init__()
-        self.rnn = MinRNN(hidden_size, input_size)
+        self.rnn = MinRNN(input_size, hidden_size)
         self.classifier = nn.Linear(hidden_size, num_classes)
 
     def forward(self, x, parallel=False):
