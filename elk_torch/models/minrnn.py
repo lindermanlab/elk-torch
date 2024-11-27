@@ -28,7 +28,7 @@ class MinRNNCell(nn.Module):
         self.b_u = nn.Parameter(torch.zeros(hidden_size))
 
     def forward(self, input, prev_state):
-        z = torch.tanh(torch.matmul(input, self.input_weights) + self.input_bias) # (B,D)
+        z = torch.tanh(torch.matmul(input, self.input_weights.T) + self.input_bias) # (B,D)
         u = torch.sigmoid(
             torch.matmul(prev_state, self.recurrent_weights.T)
             + torch.matmul(z, self.U_z.T)
