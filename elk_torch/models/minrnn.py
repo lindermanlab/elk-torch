@@ -51,19 +51,19 @@ class MinRNNCell(nn.Module):
 
 
 class MinRNN(nn.Module):
-    def __init__(self, hidden_dim, input_dim):
+    def __init__(self, hidden_size, input_size):
         super(MinRNN, self).__init__()
-        self.cell = MinRNNCell(hidden_dim, input_dim)
+        self.cell = MinRNNCell(hidden_size, input_size)
 
     def forward(self, inputs):
         """
         We are going to follow the "batch_first" convention,
 
-        inputs: (batch_size, seq_len, input_dim)
-        outputs: (batch_size, seq_len, hidden_dim)
+        inputs: (batch_size, seq_len, input_size)
+        outputs: (batch_size, seq_len, hidden_size)
         """
         batch_size, seq_len, _ = inputs.size()
-        state = torch.zeros(batch_size, self.cell.hidden_dim).to(inputs.device)  # (B,D)
+        state = torch.zeros(batch_size, self.cell.hidden_size).to(inputs.device)  # (B,D)
         outputs = []
 
         for t in range(seq_len):
@@ -76,8 +76,8 @@ class MinRNN(nn.Module):
 
     def parallel_forward(self, inputs, num_iters=10):
         """
-        inputs: (batch_size, seq_len, input_dim)
-        outputs: (batch_size, seq_len, hidden_dim)
+        inputs: (batch_size, seq_len, input_size)
+        outputs: (batch_size, seq_len, hidden_size)
 
         Note: the parallel scan from https://github.com/proger/accelerated-scan
         Takes inputs in shape (B, D, T)
@@ -85,10 +85,10 @@ class MinRNN(nn.Module):
         """
         batch_size, seq_len, _ = inputs.size()
         inputs = inputs.permute(0, 2, 1)  # (B, d_input, T)
-        hidden_init = torch.zeros(batch_size, self.cell.hidden_dim).to(
+        hidden_init = torch.zeros(batch_size, self.cell.hidden_size).to(
             inputs.device
         )  # (B,D)
-        states_guess = torch.zeros(batch_size, self.cell.hidden_dim, seq_len).to(
+        states_guess = torch.zeros(batch_size, self.cell.hidden_size, seq_len).to(
             inputs.device
         )  # (B,D,T), would ideally warm-start though
         outputs = quasi_deer_torch(
@@ -109,23 +109,23 @@ class MinRNNClassifier(nn.Module):
     Note: follows batch first convention
     """
 
-    def __init__(self, hidden_dim, input_dim, num_classes=10):
+    def __init__(self, hidden_size, input_size, num_classes=10):
         super(MinRNNClassifier, self).__init__()
-        self.rnn = MinRNN(hidden_dim, input_dim)
-        self.classifier = nn.Linear(hidden_dim, num_classes)
+        self.rnn = MinRNN(hidden_size, input_size)
+        self.classifier = nn.Linear(hidden_size, num_classes)
 
     def forward(self, x, parallel=False):
         """
-        x: (batch_size, seq_len, input_dim)
+        x: (batch_size, seq_len, input_size)
         returns: (batch_size, num_classes)
         """
         if parallel:
-            rnn_output = self.rnn.parallel_forward(x) # (batch_size, seq_len, hidden_dim)
+            rnn_output = self.rnn.parallel_forward(x) # (batch_size, seq_len, hidden_size)
         else:
-            rnn_output = self.rnn(x) # (batch_size, seq_len, hidden_dim)
+            rnn_output = self.rnn(x) # (batch_size, seq_len, hidden_size)
 
         # Use the last output for classification
-        last_hidden = rnn_output[:, -1, :]  # (batch_size, hidden_dim)
+        last_hidden = rnn_output[:, -1, :]  # (batch_size, hidden_size)
 
         # Pass through the classifier
         logits = self.classifier(last_hidden)  # (batch_size, num_classes)
